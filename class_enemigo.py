@@ -2,7 +2,7 @@ import pygame
 import random
 
 class Enemigo(pygame.sprite.Sprite):
-    def __init__(self, posicion, velocidad):
+    def __init__(self, posicion, velocidad, tipo):
         super().__init__()
         self.contador_pasos = 0
         img = pygame.image.load('img/tiles/roca.png')
@@ -12,7 +12,7 @@ class Enemigo(pygame.sprite.Sprite):
         self.rect.y = posicion[1] +2
         self.width = 30
         self.height = 30
-        self.velocidad_x = 2
+        self.velocidad_x = velocidad
         self.direccion = random.choice([1, -1])
         self.vel_y = 0
         self.next_position_x = velocidad
@@ -20,19 +20,48 @@ class Enemigo(pygame.sprite.Sprite):
         self.vida = 2
         self.visible = True
         self.tiempo_visible = 0 
-        
-        self.sprites_corriendo = [
-            pygame.transform.scale(pygame.image.load('img/enemigo/0.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/1.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/2.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/3.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/4.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/5.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/6.png'), (24, 40)),
-            pygame.transform.scale(pygame.image.load('img/enemigo/7.png'), (24, 40)),
-        ]
-        self.corriendo_index = 0
+        self.muriendo = False
+        self.frame_actual = 0  # Índice del frame actual de la animación de muerte
+        self.frame_duration = 100  # Duración en milisegundos de cada frame de la animación
+        self.tiempo_frame = 0
+        self.animacion_muerte = [
+                        pygame.image.load("img/brillos/0.png").convert(),
+                        pygame.image.load("img/brillos/1.png").convert(),
+                        pygame.image.load("img/brillos/2.png").convert(),
+                        pygame.image.load("img/brillos/3.png").convert(),
+                        pygame.image.load("img/brillos/4.png").convert(),
+                        pygame.image.load("img/brillos/5.png").convert(),
+                        pygame.image.load("img/brillos/6.png").convert(),
+                        pygame.image.load("img/brillos/7.png").convert(),
+                        pygame.image.load("img/brillos/8.png").convert(),
+                        pygame.image.load("img/brillos/9.png").convert(),
+                        pygame.image.load("img/brillos/10.png").convert()
 
+                    ]
+        if tipo == 1:
+            self.sprites_corriendo = [
+                pygame.transform.scale(pygame.image.load('img/enemigo/0.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/1.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/2.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/3.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/4.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/5.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/6.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/7.png'), (24, 40)),
+            ]
+            self.corriendo_index = 0
+        elif tipo == 2:
+            self.sprites_corriendo = [
+                pygame.transform.scale(pygame.image.load('img/enemigo/00.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/11.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/22.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/33.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/44.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/55.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/66.png'), (24, 40)),
+                pygame.transform.scale(pygame.image.load('img/enemigo/77.png'), (24, 40)),
+            ]
+            self.corriendo_index = 0
 
 
 
@@ -69,53 +98,46 @@ class Enemigo(pygame.sprite.Sprite):
                 lista.remove(proyectil)
                 
             if self.vida == 0:
-                self.animar_muerte(pantalla)
-                if self in lista_mobs:
-                    lista_mobs.remove(self)
-                
-                self.visible = False
+                self.muriendo = True
 
     def actualizar(self, pantalla, lista_plataformas, lista_proyectiles, lista_mobs):
         if self.visible:
-            self.aplicar_gravedad()
-            self.verificar_colision(lista_plataformas)
-            self.desaparecer(lista_proyectiles, pantalla, lista_mobs)
-            self.rect.x += self.next_position_x * self.direccion
-            self.rect.y += self.next_position_y
-            pantalla.blit(self.imagen, self.rect)
-            self.tiempo_visible += 1
-        
-            if self.tiempo_visible > 12 * 60:  
-                self.visible = False
-                if self in lista_mobs:
-                    lista_mobs.remove(self)
-            
-    
-            self.corriendo_index += 1
-            if self.corriendo_index >= len(self.sprites_corriendo):
-                self.corriendo_index = 0
-            if self.direccion == 1:
-                self.imagen = self.sprites_corriendo[self.corriendo_index]
-            elif self.direccion == -1:
-                self.imagen = pygame.transform.flip(self.sprites_corriendo[self.corriendo_index], True, False)
-            
-    
-    def animar_muerte(self, pantalla):
-            cont = 0
-            explosiones = [
-                pygame.image.load("img/brillos/0.png").convert(),
-                pygame.image.load("img/brillos/1.png").convert(),
-                pygame.image.load("img/brillos/2.png").convert(),
-                pygame.image.load("img/brillos/3.png").convert(),
-                pygame.image.load("img/brillos/4.png").convert(),
-                pygame.image.load("img/brillos/5.png").convert()
+            if self.muriendo:
+                self.actualizar_animacion_muerte(pantalla, lista_mobs)
+            else:
+                self.aplicar_gravedad()
+                self.verificar_colision(lista_plataformas)
+                self.desaparecer(lista_proyectiles, pantalla, lista_mobs)
+                self.rect.x += self.next_position_x * self.direccion
+                self.rect.y += self.next_position_y
+                pantalla.blit(self.imagen, self.rect)
+                self.tiempo_visible += 1
 
-            ]
-            
-            for frame in explosiones:
-                frame = pygame.transform.scale(frame, (80, 100))
-                frame.set_colorkey((0, 0, 0))
-                self.imagen = explosiones[cont]
-                cont += 1
-                pygame.display.flip()
+                if self.tiempo_visible > 12 * 60:  
+                    self.muriendo = True
                 
+                self.corriendo_index += 1
+                if self.corriendo_index >= len(self.sprites_corriendo):
+                    self.corriendo_index = 0
+                if self.direccion == 1:
+                    self.imagen = self.sprites_corriendo[self.corriendo_index]
+                elif self.direccion == -1:
+                    self.imagen = pygame.transform.flip(self.sprites_corriendo[self.corriendo_index], True, False)
+    
+    def actualizar_animacion_muerte(self, pantalla, lista_mobs):
+        if self.frame_actual < len(self.animacion_muerte):
+            tiempo_actual = pygame.time.get_ticks()
+            if tiempo_actual - self.tiempo_frame >= self.frame_duration:
+                self.imagen = self.animacion_muerte[self.frame_actual]
+                # Establecer las dimensiones del rectángulo en 0 para que no se dibuje
+                self.rect.width = 0
+                self.rect.height = 0
+                pantalla.blit(self.imagen, self.rect)
+                self.frame_actual += 1
+                self.tiempo_frame = tiempo_actual
+        else:
+            self.visible = False
+            if self in lista_mobs:
+                lista_mobs.remove(self)
+                
+    

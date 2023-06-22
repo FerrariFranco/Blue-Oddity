@@ -27,7 +27,7 @@ class Proyectil(pygame.sprite.Sprite):
     def actualizar_proyectiles(lista, screen):
         
         
-        for proyectil in lista.copy():  # Copia la lista para evitar problemas al modificarla durante la iteración
+        for proyectil in lista.copy(): 
             if proyectil.rect.x > 800 or proyectil.rect.x < 0:
                 lista.remove(proyectil)
             elif proyectil.rect.y > 600 or proyectil.rect.y < 0:
@@ -36,6 +36,21 @@ class Proyectil(pygame.sprite.Sprite):
                 proyectil.mover()
                 proyectil.dibujar(screen)
             
+            
+    def actualizar(lista, screen, plat):
+        
+        
+        for proyectil in lista.copy(): 
+            if proyectil.rect.x > 800 or proyectil.rect.x < 0:
+                lista.remove(proyectil)
+            elif proyectil.rect.y > 600 or proyectil.rect.y < 0:
+                lista.remove(proyectil)
+            else:
+                proyectil.mover()
+                proyectil.dibujar(screen)
+            for i in plat:
+                if proyectil.rect.colliderect(i):
+                    lista.remove(proyectil)
         
                 
     def colision(self, otro_rect):

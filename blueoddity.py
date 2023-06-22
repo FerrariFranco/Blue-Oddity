@@ -44,13 +44,13 @@ while True:
                 elif 250 <= y <= 300:
                     print("Opciones")
                 elif 350 <= y <= 400:
-                    print("Ver Rankings")
+                    print("Rankings")
                 elif 450 <= y <= 500:
                     pygame.quit()
                     quit()
 
     ventana.fill(NEGRO)
-    dibujar_botones(["Jugar", "Opciones", "Ver Rankings", "Salir"])
+    dibujar_botones(["Jugar", "Opciones", "Rankings", "Salir"])
 
     pygame.display.update()
     reloj.tick(60)
@@ -93,12 +93,11 @@ while True:
             opcion_menu = None  
         else:
             if nivel == 1:
-                nivel = primer_nivel(nivel)
+                primer_nivel(nivel)
             elif nivel == 2:
-                nivel = segundo_nivel(nivel)
+                segundo_nivel(nivel)
             elif nivel == 3:
-                nivel = juego_naves(nivel)
-
+                juego_naves(nivel)
             if nivel is not None:
                 opcion_menu = 1
             else:

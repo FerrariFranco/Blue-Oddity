@@ -48,8 +48,7 @@ def mostrar_mensaje(texto, pantalla):
 def menu_intermedio(screen):
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
-    repeat_button = pygame.Rect(200, 200, 200, 50)
-    next_button = pygame.Rect(200, 300, 200, 50)
+    next_button = pygame.Rect(200, 300, 250, 50)
     fondo = pygame.image.load("img/fondo_mapa.jpg")
     fondo = pygame.transform.scale(fondo, (800, 600))
 
@@ -60,17 +59,13 @@ def menu_intermedio(screen):
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if repeat_button.collidepoint(event.pos):
-                        return False
-                    elif next_button.collidepoint(event.pos):
+                    if next_button.collidepoint(event.pos):
                         return True
 
         screen.blit(fondo, (0, 0))
-        pygame.draw.rect(screen, (120, 120, 120), repeat_button)
         pygame.draw.rect(screen, (120,120,120), next_button)
-        repeat_text = font.render("Repetir Nivel", True, (255, 255, 255))
-        next_text = font.render("Siguiente Nivel", True, (255, 255, 255))
-        screen.blit(repeat_text, (repeat_button.x + 10, repeat_button.y + 10))
+
+        next_text = font.render("MENÚ DE NIVELES", True, (255, 255, 255))
         screen.blit(next_text, (next_button.x + 10, next_button.y + 10))
 
         felicidades_text = font.render("¡Felicidades! Completaste el nivel", True, (255, 255, 255))

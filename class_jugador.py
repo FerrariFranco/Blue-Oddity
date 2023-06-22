@@ -9,14 +9,14 @@ class Personaje():
         self.esta_idle = True
 
         img = pygame.image.load('img/tiles/roca.png')
-        self.imagen = pygame.transform.scale(img, (24, 40))  # Ajusta el tamaño del sprite
+        self.imagen = pygame.transform.scale(img, (24, 40))  
         self.rect = self.imagen.get_rect()
         self.rect.x = x - 5
         self.rect.y = y - 5
-        self.rect.width -= 20  # Ajusta el ancho del rectángulo de colisión
-        self.rect.height -= 10  # Ajusta la altura del rectángulo de colisión
-        self.width = 24  # Ajusta el ancho del rectángulo de colisión
-        self.height = 40  # Ajusta la altura del rectángulo de colisión
+        self.rect.width -= 20 
+        self.rect.height -= 10  
+        self.width = 24  
+        self.height = 40  
         self.vel_y = 0
         self.vel_x = 0
         self.next_position_y = 0
@@ -118,7 +118,7 @@ class Personaje():
 
     def aplicar_gravedad(self):
         if self.gravity:
-            gravedad = 0.5  # Ajusta este valor según la gravedad deseada
+            gravedad = 0.5 
             self.aceleracion_y = gravedad
             self.vel_y += self.aceleracion_y
             if self.vel_y > 10:
@@ -146,16 +146,27 @@ class Personaje():
         self.barra_vida.width = ancho_barra
         
     
-    def dañarse(self, lista):
+    def dañarse(self, lista, pantalla):
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
                 self.contador_pj += 1
-                self.vida -=  self.contador_pj * 2
+                self.vida -=  self.contador_pj * 3
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
                     return True  
+                cosa.muriendo = True
+                
 
+    def disaparado(self, lista):
+        for cosa in lista:
+            if cosa.rect.colliderect(self.rect):
+                self.contador_pj += 1
+                self.vida -=  self.contador_pj 
+                self.actualizar_barra_vida()   
+                #print(f"Te queda {self.vida * 10} de vida!")
+                if self.vida < 0:
+                    return True  
                 lista.remove(cosa)
                 
     def trampa(self, trampas):
@@ -169,14 +180,14 @@ class Personaje():
                 
                 
     def mostrar_puntos(self, pantalla):
-        fuente = pygame.font.SysFont(None, 24)  # Fuente y tamaño del texto
-        texto = fuente.render(f"Puntos: {self.puntos}", True, (64, 242, 255))  # Renderizar el texto
+        fuente = pygame.font.SysFont(None, 24) 
+        texto = fuente.render(f"Puntos: {self.puntos}", True, (64, 242, 255))
         pantalla.blit(texto, (10, pantalla.get_height() - 30)) 
 
 
     def actualizar(self, pantalla, lista):
-        self.next_position_x = 0  # Restablecer la posición en el eje x
-        self.next_position_y = 0  # Restablecer la posición en el eje y
+        self.next_position_x = 0  
+        self.next_position_y = 0
         self.manejar_entrada()
         self.aplicar_gravedad()
         self.verificar_colision(lista)
@@ -184,7 +195,6 @@ class Personaje():
         self.rect.y += self.next_position_y
         
 
-        # Animaciones
         if self.esta_corriendo:
             self.corriendo_index += 1
             if self.corriendo_index >= len(self.sprites_corriendo):
@@ -192,7 +202,6 @@ class Personaje():
             if self.direccion_actual == "derecha":
                 self.imagen = self.sprites_corriendo[self.corriendo_index]
             elif self.direccion_actual == "izquierda":
-                # Invierte horizontalmente la imagen del personaje para que mire hacia la izquierda
                 self.imagen = pygame.transform.flip(self.sprites_corriendo[self.corriendo_index], True, False)
             
             
@@ -207,7 +216,6 @@ class Personaje():
             if self.direccion_actual == "derecha":
                 self.imagen = self.sprites_idle[self.idle_index]
             elif self.direccion_actual == "izquierda":
-                # Invierte horizontalmente la imagen del personaje para que mire hacia la izquierda
                 self.imagen = pygame.transform.flip(self.sprites_idle[self.idle_index], True, False)
         
         #print(self.vel_y)

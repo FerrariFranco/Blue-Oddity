@@ -72,6 +72,7 @@ def primer_nivel(nivel):
     enemigo_spawns = [(50, 40), (600, 40), (600, 510)]
     
     
+    
     consumibles_spawn = [(660, 40), (680, 250), (180, 180), (80, 420),  (100, 40)]
     consumibles = []
     tiempo_ultimo_consumible = pygame.time.get_ticks()
@@ -154,13 +155,13 @@ def primer_nivel(nivel):
             tiempo = pygame.time.get_ticks()
 
             if tiempo - spawn_enemigo >= 3000:
-                enemigo = Enemigo(random.choice(enemigo_spawns), 2)
+                enemigo = Enemigo(random.choice(enemigo_spawns), 4, 1)
                 enemigos.append(enemigo)
                 spawn_enemigo = tiempo
 
             for enemigo in enemigos:
                 enemigo.actualizar(screen, plataformas, disparos, enemigos)
-                if personaje.dañarse(enemigos):
+                if personaje.dañarse(enemigos, screen):
                     gameover = True
                     
             
@@ -169,16 +170,13 @@ def primer_nivel(nivel):
 
             clock.tick(60)
             
-            if cronometro.tiempo == 55:
-                personaje.gravity = False
+            if cronometro.tiempo == 30:
                 if menu_intermedio(screen):
                     with open('Puntos_lvl_1.txt', 'a') as archivo:
                         archivo.write(f'Fecha y hora: {formato_fecha_hora} - Puntos totales = {personaje.puntos}\n')
                     nivel = 2
                     return nivel
-                if not menu_intermedio(screen):
-                    nivel = 1
-                    return nivel
+                
         if gameover:
                 
                 mostrar_mensaje("PERDISTE. Presiona R para volver a intentar.", screen)
@@ -243,13 +241,16 @@ def segundo_nivel(nivel):
     trampas = []
 
     enemigos = []
+    disparos_enemigos = []
+    tiempo_ultimo_disparo = pygame.time.get_ticks()
+
     spawn_enemigo = 0
     enemigo_spawns = [(50, 40), (600, 40), (50, 510), (600, 510), (50, 200), (750, 200)]
 
-    consumibles_spawn = [(660, 40), (680, 250), (180, 180), (80, 420),  (100, 40)]
+    consumibles_spawn = [(660, 520), (680, 260), (180, 190), (80, 430),  (100, 50)]
     consumibles = []
     tiempo_ultimo_consumible = pygame.time.get_ticks()
-    intervalo_consumibles = 1000
+    intervalo_consumibles = 1500
 
     fecha_hora_actual = datetime.datetime.now()
     formato_fecha_hora = fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S")
@@ -337,14 +338,30 @@ def segundo_nivel(nivel):
             tiempo = pygame.time.get_ticks()
 
             if tiempo - spawn_enemigo >= 2000:
-                enemigo = Enemigo(random.choice(enemigo_spawns), 2)
+                enemigo = Enemigo(random.choice(enemigo_spawns), 2,2)
                 enemigos.append(enemigo)
                 spawn_enemigo = tiempo
+                
+            
+            tiempo_actual = pygame.time.get_ticks()
 
             for enemigo in enemigos:
                 enemigo.actualizar(screen, plataformas, disparos, enemigos)
-                if personaje.dañarse(enemigos):
+                if personaje.dañarse(enemigos, screen):
                     gameover = True
+                if tiempo_actual - tiempo_ultimo_disparo >= 2500:
+                    if enemigo.direccion == 1:
+                        ang_enemigo = 0
+                    elif enemigo.direccion == -1:
+                        ang_enemigo = 180
+                    proyectil_enemigo = Proyectil((15, 15), (enemigo.rect.x, enemigo.rect.y), "img/122.png", 50, 3,(ang_enemigo))
+                    disparos_enemigos.append(proyectil_enemigo)
+                    tiempo_ultimo_disparo = tiempo_actual
+                        
+                        
+                if personaje.disaparado(disparos_enemigos):
+                    gameover = True
+                Proyectil.actualizar(disparos_enemigos, screen, plataformas)
             pygame.display.flip()
 
             clock.tick(60)
