@@ -4,8 +4,8 @@ import sys
 class Cronometro:
     def __init__(self, tiempo_inicial):
         self.tiempo = tiempo_inicial
-        self.cooldown = pygame.time.get_ticks()  # Variable para controlar el tiempo de espera entre actualizaciones
-        self.cooldown_intervalo = 1000  # Intervalo de tiempo en milisegundos entre actualizaciones
+        self.cooldown = pygame.time.get_ticks()  
+        self.cooldown_intervalo = 1000 
 
         self.fuente = pygame.font.Font(None, 36)
         self.color_texto = (255, 255, 255)

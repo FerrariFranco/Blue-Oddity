@@ -12,6 +12,7 @@ from class_enemigo import *
 from class_trampas import *
 from class_consumibles import *
 import datetime
+import sqlite3
 
 pygame.init()
 
@@ -82,15 +83,32 @@ def primer_nivel(nivel):
     proyectiles_group = pygame.sprite.Group()
     
     gameover = False
+    pausa = False
 
     done = True
 
     while done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                estado_juego = 0
                 pygame.quit()
                 break
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pausa = not pausa
+                    
+        
+        if pausa:
+            mostrar_mensaje("PAUSA", screen)
+            while pausa:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        pausa = False
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pausa = False
+                clock.tick(60)
+            continue
         if not gameover:
             if pygame.key.get_pressed()[pygame.K_z]:
                 lanzando = True
@@ -171,11 +189,20 @@ def primer_nivel(nivel):
             clock.tick(60)
             
             if cronometro.tiempo == 30:
+                with sqlite3.connect("nivel1_ranking.db") as conexión:
+                    cursor = conexión.cursor()
+                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (fecha TEXT, puntaje INTEGER)")
+                    # Insertar los datos en la tabla
+                    sentencia_sql = "INSERT INTO Puntos_1 (fecha, puntaje) VALUES (?, ?)"
+                    cursor.execute(sentencia_sql, (formato_fecha_hora, personaje.puntos))
+                    # Confirmar los cambios en la base de datos
+                    conexión.commit()
                 if menu_intermedio(screen):
-                    with open('Puntos_lvl_1.txt', 'a') as archivo:
-                        archivo.write(f'Fecha y hora: {formato_fecha_hora} - Puntos totales = {personaje.puntos}\n')
-                    nivel = 2
-                    return nivel
+                    opcion_menu = 1
+                    return opcion_menu
+                if not menu_intermedio(screen):
+                    opcion_menu = 3
+                    return opcion_menu
                 
         if gameover:
                 
@@ -368,14 +395,20 @@ def segundo_nivel(nivel):
             
             if cronometro.tiempo == 30:
                 personaje.gravity = False
+                with sqlite3.connect("nivel2_ranking.db") as conexión:
+                    cursor = conexión.cursor()
+                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_2 (fecha TEXT, puntaje INTEGER)")
+                    # Insertar los datos en la tabla
+                    sentencia_sql = "INSERT INTO Puntos_2 (fecha, puntaje) VALUES (?, ?)"
+                    cursor.execute(sentencia_sql, (formato_fecha_hora, personaje.puntos))
+                    # Confirmar los cambios en la base de datos
+                    conexión.commit()
                 if menu_intermedio(screen):
-                    with open('Puntos_lvl_2.txt', 'a') as archivo:
-                        archivo.write(f'Fecha y hora: {formato_fecha_hora} - Puntos totales = {personaje.puntos}\n')
-                    nivel = 3
-                    return nivel
+                    opcion_menu = 1
+                    return opcion_menu
                 if not menu_intermedio(screen):
-                    nivel = 2
-                    return nivel
+                    opcion_menu = 3
+                    return opcion_menu
         if gameover:
                 mostrar_mensaje("PERDISTE. Presiona R para volver a intentar.", screen)
             

@@ -49,6 +49,7 @@ def menu_intermedio(screen):
     font = pygame.font.Font(None, 36)
     clock = pygame.time.Clock()
     next_button = pygame.Rect(200, 300, 250, 50)
+    rankings_button = pygame.Rect(200, 380, 250, 50)
     fondo = pygame.image.load("img/fondo_mapa.jpg")
     fondo = pygame.transform.scale(fondo, (800, 600))
 
@@ -61,12 +62,19 @@ def menu_intermedio(screen):
                 if event.button == 1:
                     if next_button.collidepoint(event.pos):
                         return True
-
+                    elif rankings_button.collidepoint(event.pos):
+                        # Lógica para mostrar los rankings
+                        return False
+        
         screen.blit(fondo, (0, 0))
-        pygame.draw.rect(screen, (120,120,120), next_button)
+        pygame.draw.rect(screen, (120, 120, 120), next_button)
+        pygame.draw.rect(screen, (120, 120, 120), rankings_button)
 
         next_text = font.render("MENÚ DE NIVELES", True, (255, 255, 255))
+        rankings_text = font.render("Rankings", True, (255, 255, 255))
+
         screen.blit(next_text, (next_button.x + 10, next_button.y + 10))
+        screen.blit(rankings_text, (rankings_button.x + 10, rankings_button.y + 10))
 
         felicidades_text = font.render("¡Felicidades! Completaste el nivel", True, (255, 255, 255))
         felicidades_rect = felicidades_text.get_rect(center=(screen.get_width() // 2, 50))

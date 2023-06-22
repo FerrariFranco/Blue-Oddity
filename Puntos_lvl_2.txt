@@ -1,8 +1,0 @@
-Fecha y hora: 2023-06-21 19:15:39 - Puntos totales = 240
-Fecha y hora: 2023-06-21 19:22:37 - Puntos totales = 380
-Fecha y hora: 2023-06-22 09:47:38 - Puntos totales = 380
-Fecha y hora: 2023-06-22 10:13:21 - Puntos totales = 580
-Fecha y hora: 2023-06-22 12:16:13 - Puntos totales = 200
-Fecha y hora: 2023-06-22 13:35:50 - Puntos totales = 340
-Fecha y hora: 2023-06-22 14:48:29 - Puntos totales = 100
-Fecha y hora: 2023-06-22 14:49:04 - Puntos totales = 0

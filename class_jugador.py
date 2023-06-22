@@ -161,8 +161,8 @@ class Personaje():
     def disaparado(self, lista):
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
-                self.contador_pj += 1
-                self.vida -=  self.contador_pj 
+                #self.contador_pj += 1
+                self.vida -=  1
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
