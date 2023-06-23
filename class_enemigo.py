@@ -1,5 +1,6 @@
 import pygame
 import random
+from class_proyectil import *
 
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion, velocidad, tipo):
@@ -24,6 +25,9 @@ class Enemigo(pygame.sprite.Sprite):
         self.frame_actual = 0  # Índice del frame actual de la animación de muerte
         self.frame_duration = 100  # Duración en milisegundos de cada frame de la animación
         self.tiempo_frame = 0
+        self.tipo = tipo
+        self.tiempo_disparo = 0
+        self.lista_proyectiles = []
         self.animacion_muerte = [
                         pygame.image.load("img/brillos/0.png").convert(),
                         pygame.image.load("img/brillos/1.png").convert(),
@@ -105,6 +109,17 @@ class Enemigo(pygame.sprite.Sprite):
             if self.muriendo:
                 self.actualizar_animacion_muerte(pantalla, lista_mobs)
             else:
+                if self.tipo == 2:
+                    if self.direccion == -1:
+                        ang = 0
+                    else:
+                        ang = 180
+                    tiempo_actual = pygame.time.get_ticks()
+                    if tiempo_actual - self.tiempo_disparo >= 2000:  # 2000 ms = 2 segundos
+                        # Crear un nuevo proyectil
+                        proyectil = Proyectil((15, 15), (self.rect.x + 3, self.rect.y), "img/41.png", 90, -6, ang)
+                        self.lista_proyectiles.append(proyectil)
+                        self.tiempo_disparo = tiempo_actual
                 self.aplicar_gravedad()
                 self.verificar_colision(lista_plataformas)
                 self.desaparecer(lista_proyectiles, pantalla, lista_mobs)

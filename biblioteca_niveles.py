@@ -182,8 +182,6 @@ def primer_nivel(nivel):
                 if personaje.dañarse(enemigos, screen):
                     gameover = True
                     
-            
-            
             pygame.display.flip()
 
             clock.tick(60)
@@ -192,10 +190,8 @@ def primer_nivel(nivel):
                 with sqlite3.connect("nivel1_ranking.db") as conexión:
                     cursor = conexión.cursor()
                     cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (fecha TEXT, puntaje INTEGER)")
-                    # Insertar los datos en la tabla
                     sentencia_sql = "INSERT INTO Puntos_1 (fecha, puntaje) VALUES (?, ?)"
                     cursor.execute(sentencia_sql, (formato_fecha_hora, personaje.puntos))
-                    # Confirmar los cambios en la base de datos
                     conexión.commit()
                 if menu_intermedio(screen):
                     opcion_menu = 1
@@ -269,7 +265,9 @@ def segundo_nivel(nivel):
 
     enemigos = []
     disparos_enemigos = []
-    tiempo_ultimo_disparo = pygame.time.get_ticks()
+    tiempo_disparo_enemigo = 1000
+    enemigo_activo = None
+    tiempo_ultimo_disparo = 0
 
     spawn_enemigo = 0
     enemigo_spawns = [(50, 40), (600, 40), (50, 510), (600, 510), (50, 200), (750, 200)]
@@ -292,15 +290,31 @@ def segundo_nivel(nivel):
     proyectiles_group = pygame.sprite.Group()
 
     gameover = False
-
+    pausa = False
     done = True
 
     while done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                estado_juego = 0
                 pygame.quit()
                 break
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pausa = not pausa
+                    
+        
+        if pausa:
+            mostrar_mensaje("PAUSA", screen)
+            while pausa:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        pausa = False
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pausa = False
+                clock.tick(60)
+            continue
         if not gameover:
             if pygame.key.get_pressed()[pygame.K_z]:
                 lanzando = True
@@ -318,8 +332,6 @@ def segundo_nivel(nivel):
                     if personaje.trampa(trampas):
                         gameover = True
                 
-            actualizar_personaje(personaje, screen, plataformas)
-            
             
             timess = pygame.time.get_ticks()
 
@@ -345,7 +357,8 @@ def segundo_nivel(nivel):
                 # Verificar colisiones con el personaje
                 if consumible.rect.colliderect(personaje.rect):
                     if consumible.tipo == "vida":
-                        personaje.vida = 20
+                        if personaje.vida < 15:
+                            personaje.vida += 5
                         personaje.puntos += 40
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
@@ -356,7 +369,8 @@ def segundo_nivel(nivel):
                 cooldown, contador_balas = crear_proyectil(personaje, disparos, proyectiles_group, cooldown, cadencia, contador_balas)
 
             actualizar_proyectiles(disparos, screen)
-            
+            actualizar_personaje(personaje, screen, plataformas)
+
             cronometro.actualizar()
             cronometro.dibujar(screen)
 
@@ -364,34 +378,25 @@ def segundo_nivel(nivel):
 
             tiempo = pygame.time.get_ticks()
 
-            if tiempo - spawn_enemigo >= 2000:
-                enemigo = Enemigo(random.choice(enemigo_spawns), 2,2)
+            if tiempo - spawn_enemigo >= 3000:
+                enemigo = Enemigo(random.choice(enemigo_spawns), 2, 2)
                 enemigos.append(enemigo)
                 spawn_enemigo = tiempo
-                
-            
-            tiempo_actual = pygame.time.get_ticks()
 
             for enemigo in enemigos:
                 enemigo.actualizar(screen, plataformas, disparos, enemigos)
-                if personaje.dañarse(enemigos, screen):
+                Proyectil.actualizar_proyectiles(enemigo.lista_proyectiles, screen)
+                if personaje.disaparado(enemigo.lista_proyectiles):
                     gameover = True
-                if tiempo_actual - tiempo_ultimo_disparo >= 2500:
-                    if enemigo.direccion == 1:
-                        ang_enemigo = 0
-                    elif enemigo.direccion == -1:
-                        ang_enemigo = 180
-                    proyectil_enemigo = Proyectil((15, 15), (enemigo.rect.x, enemigo.rect.y), "img/122.png", 50, 3,(ang_enemigo))
-                    disparos_enemigos.append(proyectil_enemigo)
-                    tiempo_ultimo_disparo = tiempo_actual
-                        
-                        
-                if personaje.disaparado(disparos_enemigos):
-                    gameover = True
-                Proyectil.actualizar(disparos_enemigos, screen, plataformas)
+
+                    
+            
+            
             pygame.display.flip()
 
             clock.tick(60)
+
+            
             
             if cronometro.tiempo == 30:
                 personaje.gravity = False

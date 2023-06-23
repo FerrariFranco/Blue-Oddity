@@ -149,8 +149,7 @@ class Personaje():
     def dañarse(self, lista, pantalla):
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
-                self.contador_pj += 1
-                self.vida -=  self.contador_pj * 3
+                self.vida -=  5
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
@@ -162,7 +161,7 @@ class Personaje():
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
                 #self.contador_pj += 1
-                self.vida -=  1
+                self.vida -=  3
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
