@@ -3,7 +3,11 @@ from class_jugador import *
 from class_plataforma import *
 from class_proyectil import *
 import sys
+import pygame.mixer
 pygame.init()
+pygame.mixer.init()
+
+
 
 def cargar_imagen(ruta, tamaño):
     imagen = pygame.image.load(ruta)
@@ -18,8 +22,10 @@ def actualizar_personaje(personaje, screen, plataformas):
     personaje.actualizar(screen, plataformas)
 
 def crear_proyectil(personaje, disparos, proyectiles_group, cooldown, cadencia, contador):
+    sonido_proyectil = pygame.mixer.Sound("sfx/laserShoot.wav")
     tiempo_actual = pygame.time.get_ticks()
     if tiempo_actual - cooldown >= cadencia:
+        sonido_proyectil.play()
         balas = Proyectil((15, 15), (personaje.rect.x, personaje.rect.y), "img/267.png", 50, 8, personaje.angulo)
         disparos.append(balas)
         proyectiles_group.add(balas)

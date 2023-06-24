@@ -1,6 +1,9 @@
 import pygame
+import pygame.mixer
 import random
 from class_proyectil import *
+pygame.mixer.init()
+pygame.init()
 
 class Enemigo(pygame.sprite.Sprite):
     def __init__(self, posicion, velocidad, tipo):
@@ -40,8 +43,10 @@ class Enemigo(pygame.sprite.Sprite):
                         pygame.image.load("img/brillos/8.png").convert(),
                         pygame.image.load("img/brillos/9.png").convert(),
                         pygame.image.load("img/brillos/10.png").convert()
-
                     ]
+        
+        for image in self.animacion_muerte:
+            image.set_colorkey((0, 0, 0)) 
         if tipo == 1:
             self.sprites_corriendo = [
                 pygame.transform.scale(pygame.image.load('img/enemigo/0.png'), (24, 40)),
@@ -66,6 +71,11 @@ class Enemigo(pygame.sprite.Sprite):
                 pygame.transform.scale(pygame.image.load('img/enemigo/77.png'), (24, 40)),
             ]
             self.corriendo_index = 0
+            
+        self.sonido_muerte = pygame.mixer.Sound('sfx/explosion.wav')
+        self.sonido_disparo = pygame.mixer.Sound('sfx/enemyshoot.wav')
+        self.sonido_muerte_bandera = True
+
 
 
 
@@ -107,6 +117,10 @@ class Enemigo(pygame.sprite.Sprite):
     def actualizar(self, pantalla, lista_plataformas, lista_proyectiles, lista_mobs):
         if self.visible:
             if self.muriendo:
+                if self.sonido_muerte_bandera:
+                    self.sonido_muerte.play()
+                    self.sonido_muerte_bandera = False
+
                 self.actualizar_animacion_muerte(pantalla, lista_mobs)
             else:
                 if self.tipo == 2:
@@ -118,6 +132,7 @@ class Enemigo(pygame.sprite.Sprite):
                     if tiempo_actual - self.tiempo_disparo >= 2000:  # 2000 ms = 2 segundos
                         # Crear un nuevo proyectil
                         proyectil = Proyectil((15, 15), (self.rect.x + 3, self.rect.y), "img/41.png", 90, -6, ang)
+                        self.sonido_disparo.play()
                         self.lista_proyectiles.append(proyectil)
                         self.tiempo_disparo = tiempo_actual
                 self.aplicar_gravedad()
@@ -151,8 +166,10 @@ class Enemigo(pygame.sprite.Sprite):
                 self.frame_actual += 1
                 self.tiempo_frame = tiempo_actual
         else:
+            
             self.visible = False
             if self in lista_mobs:
+                
                 lista_mobs.remove(self)
                 
     

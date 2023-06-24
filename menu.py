@@ -64,7 +64,31 @@ def mostrar_rankings():
         dibujar_texto(texto, fuente, BLANCO, 250, 400 + i * 30)  # Reducir tamaño de fuente
 
     pygame.display.update()
+
+def dibujar_menu_opciones(volumen_musica, volumen_efectos):
+    ventana.fill(NEGRO)
+
+    dibujar_texto("Volumen de Música", fuente, BLANCO, 300, 100)
+    dibujar_texto("Volumen de Efectos", fuente, BLANCO, 300, 250)
+
+    dibujar_texto("-", fuente, BLANCO, 250, 150)
+    dibujar_texto("+", fuente, BLANCO, 550, 150)
+
+    dibujar_texto("-", fuente, BLANCO, 250, 300)
+    dibujar_texto("+", fuente, BLANCO, 550, 300)
+
+    dibujar_texto(f"Volumen de Música: {volumen_musica:.1f}", fuente, BLANCO, 300, 450)
+    dibujar_texto(f"Volumen de Efectos: {volumen_efectos:.1f}", fuente, BLANCO, 300, 500)
+
+    pygame.draw.rect(ventana, BLANCO, (100, 50, 150, 50))
+    dibujar_texto("Volver", fuente, NEGRO, 125, 60)  # Coordenadas 
+    
 def ejecutar_menu():
+    pygame.mixer.music.load('sfx/noMEdejansalir.mp3')
+    pygame.mixer.music.play(-1)
+
+    volumen_musica = 0.5  # Volumen inicial de la música
+    volumen_efectos = 0.5 
 
     opcion_menu = None
     nivel = None
@@ -85,7 +109,7 @@ def ejecutar_menu():
                         opcion_menu = 1
                     elif 250 <= y <= 300:
                         print("Opciones")
-                        opcion_menu = 3
+                        opcion_menu = 2
                     elif 350 <= y <= 400:
                         print("Rankings")
                         opcion_menu = 4
@@ -103,6 +127,7 @@ def ejecutar_menu():
             regresar_primer_menu = False
             nivel = None
             while True:
+
                 for evento in pygame.event.get():
                     if evento.type == pygame.QUIT:
                         pygame.quit()
@@ -137,23 +162,81 @@ def ejecutar_menu():
                 opcion_menu = None  
             else:
                 if nivel == 1:
-                    o = primer_nivel(nivel)
+                    o = primer_nivel(nivel, volumen_musica, volumen_efectos)
                 elif nivel == 2:
-                    o = segundo_nivel(nivel)
+                    o = segundo_nivel(nivel, volumen_musica, volumen_efectos)
                 elif nivel == 3:
-                    juego_naves(nivel)
+                    juego_naves(nivel, volumen_musica, volumen_efectos)
                 if o == 1:
                     opcion_menu = 1
+                    pygame.mixer.music.load("sfx/noMEdejansalir.mp3")
+                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.play(-1)
                 elif o == 3:
                     opcion_menu = 4
+                    pygame.mixer.music.load("sfx/noMEdejansalir.mp3")
+                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.play(-1)
+                    
+
                 else:
                     break
+        elif opcion_menu == 2:  
 
-        if opcion_menu == 4:
+            while opcion_menu == 2:
+                for evento in pygame.event.get():
+                    if evento.type == pygame.QUIT:
+                        pygame.quit()
+                        quit()
+                    elif evento.type == pygame.MOUSEBUTTONDOWN:
+                        x, y = pygame.mouse.get_pos()
+
+                        if 250 <= x <= 300 and 150 <= y <= 200:
+                            volumen_musica -= 0.1
+                            if volumen_musica < 0.0:
+                                volumen_musica = 0.0
+                            pygame.mixer.music.set_volume(volumen_musica)
+
+                        elif 550 <= x <= 600 and 150 <= y <= 200:
+                            volumen_musica += 0.1
+                            if volumen_musica > 1.0:
+                                volumen_musica = 1.0
+                            pygame.mixer.music.set_volume(volumen_musica)
+
+                        elif 250 <= x <= 300 and 300 <= y <= 350:
+                            volumen_efectos -= 0.1
+                            if volumen_efectos < 0.0:
+                                volumen_efectos = 0.0
+                            
+
+                        elif 550 <= x <= 600 and 300 <= y <= 350:
+                            volumen_efectos += 0.1
+                            if volumen_efectos > 1.0:
+                                volumen_efectos = 1.0
+                            
+                        elif 100 <= x <= 250 and 50 <= y <= 100:
+                            opcion_menu = None
+
+                pygame.display.update()
+
+                dibujar_menu_opciones(volumen_musica, volumen_efectos)
+
+                pygame.display.update()
+                reloj.tick(60)
+
+
+
+
+
+
+
+        elif opcion_menu == 4:
             en_menu_rankings = True
             opcion_menu = None
+            
 
         while en_menu_rankings:
+
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     pygame.quit()

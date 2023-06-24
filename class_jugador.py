@@ -1,5 +1,6 @@
 import pygame
-
+import pygame.mixer
+pygame.mixer.init()
 pygame.init()
 class Personaje():
     def __init__(self, x, y):
@@ -64,6 +65,11 @@ class Personaje():
             pygame.transform.scale(pygame.image.load('img/jump/4.png'), (24, 40)),
         ]
         self.saltando_index = 0
+        
+        
+        self.sonido_daño = pygame.mixer.Sound('sfx/hitHurt.wav')
+        self.sonido_salto = pygame.mixer.Sound('sfx/jump.wav')
+
 
     def manejar_entrada(self):
         
@@ -96,6 +102,7 @@ class Personaje():
     def saltar(self):
         if not self.saltando and not self.esta_saltando and self.vel_y == 0:
             if self.on_ground or self.salto_presionado:
+                self.sonido_salto.play()
                 self.vel_y = -11
                 self.saltando = True
                 self.esta_saltando = True
@@ -150,6 +157,7 @@ class Personaje():
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
                 self.vida -=  5
+                self.sonido_daño.play()
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
@@ -162,6 +170,7 @@ class Personaje():
             if cosa.rect.colliderect(self.rect):
                 #self.contador_pj += 1
                 self.vida -=  3
+                self.sonido_daño.play()
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:

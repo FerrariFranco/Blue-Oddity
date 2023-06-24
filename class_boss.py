@@ -12,7 +12,9 @@ class Boss(pygame.sprite.Sprite):
         self.visible = True
         self.contador = 0
         self.vida = 350  # Vida inicial del enemigo
-        self.vida_maxima = 350  # Vida máxima del enemigo   
+        self.vida_maxima = 350  # Vida máxima del enemigo
+        self.sonido_muerte = pygame.mixer.Sound("sfx/explosion.wav")
+        self.bandera_sonido = True
 
     def dibujar(self, pantalla):
         if self.visible:
@@ -61,6 +63,9 @@ class Boss(pygame.sprite.Sprite):
     
     def desaparecer(self, pantalla):
         self.visible = False
+        if self.bandera_sonido:
+            self.sonido_muerte.play()
+            self.bandera_sonido = False
         self.hitbox = pygame.Rect(0, 0, 0, 0)
         
     def dar_direccion(self, x, y):

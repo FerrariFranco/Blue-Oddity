@@ -13,10 +13,13 @@ from class_trampas import *
 from class_consumibles import *
 import datetime
 import sqlite3
+import pygame.mixer
+import pygame.mixer_music
 
 pygame.init()
+pygame.mixer.init()
 
-def primer_nivel(nivel):
+def primer_nivel(nivel, vm, ve):
     
     width = 800
     height = 600
@@ -32,6 +35,12 @@ def primer_nivel(nivel):
     cronometro = Cronometro(60)
     
     clock = pygame.time.Clock()
+    
+    
+    
+    pygame.mixer.music.load('sfx/nose.wav')
+    pygame.mixer.music.play(-1)
+
 
     personaje = Personaje(100, 600)
     velocidad_mov = 2
@@ -72,7 +81,8 @@ def primer_nivel(nivel):
     spawn_enemigo = 0
     enemigo_spawns = [(50, 40), (600, 40), (600, 510)]
     
-    
+    sonido_gema = pygame.mixer.Sound('sfx/pickupCoin (1).wav')
+    sonido_vida = pygame.mixer.Sound('sfx/pickupCoin.wav')
     
     consumibles_spawn = [(660, 40), (680, 250), (180, 180), (80, 420),  (100, 40)]
     consumibles = []
@@ -87,7 +97,12 @@ def primer_nivel(nivel):
 
     done = True
 
+    pygame.mixer_music.set_volume(vm)
+
+
     while done:
+        pygame.mixer.music.get_busy()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -152,10 +167,12 @@ def primer_nivel(nivel):
                 if consumible.rect.colliderect(personaje.rect):
                     if consumible.tipo == "vida":
                         if personaje.vida < 15:
+                            sonido_vida.play()
                             personaje.vida += 5
                         personaje.puntos += 40
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
+                        sonido_gema.play()
                         personaje.puntos += 100
                     consumibles.remove(consumible)
 
@@ -182,6 +199,10 @@ def primer_nivel(nivel):
                 if personaje.dañarse(enemigos, screen):
                     gameover = True
                     
+                    
+            for i in range(pygame.mixer.get_num_channels()):
+                canal = pygame.mixer.Channel(i)
+                canal.set_volume(ve) 
             pygame.display.flip()
 
             clock.tick(60)
@@ -195,9 +216,11 @@ def primer_nivel(nivel):
                     conexión.commit()
                 if menu_intermedio(screen):
                     opcion_menu = 1
+
                     return opcion_menu
                 if not menu_intermedio(screen):
                     opcion_menu = 3
+
                     return opcion_menu
                 
         if gameover:
@@ -215,7 +238,7 @@ def primer_nivel(nivel):
     pygame.quit()
     return nivel
 
-def segundo_nivel(nivel):
+def segundo_nivel(nivel, vm, ve):
     
     width = 800
     height = 600
@@ -227,6 +250,10 @@ def segundo_nivel(nivel):
 
     cronometro = Cronometro(60)
 
+    pygame.mixer.music.load('sfx/nose.wav')
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(vm)
+    
     clock = pygame.time.Clock()
 
     personaje = Personaje(80, 480)
@@ -259,16 +286,7 @@ def segundo_nivel(nivel):
     plat12 = Plataforma((16, 476), (600, 21), 'img/tiles\plat_horizontal.png')
     plat13 = Plataforma((700, 476), (100, 21), 'img/tiles\plat_horizontal.png')
 
-
-    trap1 = Trampa((500, 80), (25, 25), 'img/trampas/0.png')
-    trampas = []
-
     enemigos = []
-    disparos_enemigos = []
-    tiempo_disparo_enemigo = 1000
-    enemigo_activo = None
-    tiempo_ultimo_disparo = 0
-
     spawn_enemigo = 0
     enemigo_spawns = [(50, 40), (600, 40), (50, 510), (600, 510), (50, 200), (750, 200)]
 
@@ -276,6 +294,8 @@ def segundo_nivel(nivel):
     consumibles = []
     tiempo_ultimo_consumible = pygame.time.get_ticks()
     intervalo_consumibles = 1500
+    sonido_gema = pygame.mixer.Sound('sfx/pickupCoin (1).wav')
+    sonido_vida = pygame.mixer.Sound('sfx/pickupCoin.wav')
 
     fecha_hora_actual = datetime.datetime.now()
     formato_fecha_hora = fecha_hora_actual.strftime("%Y-%m-%d %H:%M:%S")
@@ -293,7 +313,11 @@ def segundo_nivel(nivel):
     pausa = False
     done = True
 
+    
     while done:
+        
+        pygame.mixer.music.get_busy()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -325,12 +349,6 @@ def segundo_nivel(nivel):
             dibujar_plataformas(plataformas, screen)
             
             
-            
-            for trampa in trampas:
-                trampa.dibujar(screen)
-                if trampa.rect.colliderect(personaje.rect):
-                    if personaje.trampa(trampas):
-                        gameover = True
                 
             
             timess = pygame.time.get_ticks()
@@ -358,10 +376,12 @@ def segundo_nivel(nivel):
                 if consumible.rect.colliderect(personaje.rect):
                     if consumible.tipo == "vida":
                         if personaje.vida < 15:
+                            sonido_vida.play()
                             personaje.vida += 5
                         personaje.puntos += 40
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
+                        sonido_gema.play()
                         personaje.puntos += 100
                     consumibles.remove(consumible)
 
@@ -389,8 +409,9 @@ def segundo_nivel(nivel):
                 if personaje.disaparado(enemigo.lista_proyectiles):
                     gameover = True
 
-                    
-            
+            for i in range(pygame.mixer.get_num_channels()):
+                canal = pygame.mixer.Channel(i)
+                canal.set_volume(ve) 
             
             pygame.display.flip()
 
@@ -398,7 +419,7 @@ def segundo_nivel(nivel):
 
             
             
-            if cronometro.tiempo == 30:
+            if cronometro.tiempo == 55:
                 personaje.gravity = False
                 with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()
@@ -427,13 +448,16 @@ def segundo_nivel(nivel):
     return nivel
 
 
-def juego_naves(estado_juego):
+def juego_naves(estado_juego, vm, ve):
     
     width = 800
     height = 600
     screen = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Blue Oddity")
 
+    pygame.mixer.music.load('sfx/bossfight.wav')
+    pygame.mixer.music.play(-1)
+    
     #FONDO
     folder_path = "img/animacion"  
     frame_files = sorted(os.listdir(folder_path))
@@ -461,11 +485,13 @@ def juego_naves(estado_juego):
     disparando = False
     cadencia_disparo = 70  
     tiempo_ultimo_disparo = pygame.time.get_ticks()
+    sonido_proyectil = (pygame.mixer.Sound("sfx/click.wav"))
     buff = False
 
     shift_presionado = False
     imagen_adicional = pygame.image.load("img/158.png")
     imagen_adicional = pygame.transform.scale(imagen_adicional, (10, 10))
+    sonido_buff = pygame.mixer.Sound("sfx/powerUp.wav")
 
 
     #Boss
@@ -477,6 +503,7 @@ def juego_naves(estado_juego):
     ultimo_disparo_enemigo = pygame.time.get_ticks() 
     patron = 1
     boss = Boss((80, 100),x_b, y_b)
+    sonido_boss = pygame.mixer.Sound("sfx/bossattack.wav")
 
     direcciones = [(400, 100), (160, 40), (400, 100), (600, 300), (620, 140)]
     direccion_actual = 0 
@@ -489,11 +516,11 @@ def juego_naves(estado_juego):
     # Contador para el tiempo estático
     contador_estatico = 0
 
-
+    pygame.mixer.music.set_volume(vm)
     win = True
 
     while not done:
-    
+        pygame.mixer.music.get_busy()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -538,6 +565,7 @@ def juego_naves(estado_juego):
                 tiempo_actual = pygame.time.get_ticks()
                 if tiempo_actual - tiempo_ultimo_disparo >= cadencia_disparo:
                     balas = Proyectil((15, 15), nave.posicion, "img/21.png", 50, 15, 90)
+                    sonido_proyectil.play()
                     if buff:
                         if shift_presionado:
                             balas.bufeo_pj(proyectiles, nave, 90, 7)
@@ -564,6 +592,7 @@ def juego_naves(estado_juego):
                         case 1:
                             if modo_lunatico:
                                 disparo.espiral(proyectil_cont, boss.posicion[0], boss.posicion[1], 0, 30, 10)
+                            sonido_boss.play()
                             disparo.triple_linea(proyectil_cont, boss.posicion[0], boss.posicion[1], 2, nave.hitbox.x, nave.hitbox.y)
                             patron += 1
                         case 2:
@@ -571,11 +600,13 @@ def juego_naves(estado_juego):
                             patron += 1
                         case 3:
                             disparo.circulo(proyectil_cont, boss.posicion[0], boss.posicion[1], 0)
+                            sonido_boss.play()
                             if modo_lunatico:
                                 patron += 1
                             else:
                                 patron = 1
                         case 4:
+                            sonido_boss.play()
                             disparo.linea(proyectil_cont, boss.posicion[0], boss.posicion[1], 2, nave.hitbox.x, nave.hitbox.y)
                             patron = 1
                     ultimo_disparo_enemigo = tiempo
@@ -608,18 +639,25 @@ def juego_naves(estado_juego):
             
             if boss.verificar_colision(proyectiles, screen):
                 buff = True
+                sonido_buff.play()
             elif boss.verificar_colision(proyectiles, screen) == False:
                 if win:
                     boss.animar_muerte(screen)
                     print("GANASTE")
                     win = False
             
+            
             boss.actualizar()
             boss.dibujar(screen)
+            
+            for i in range(pygame.mixer.get_num_channels()):
+                canal = pygame.mixer.Channel(i)
+                canal.set_volume(ve) 
         if not win:
             mostrar_mensaje(f"GANASTE! Juego hecho por Franco Ferrari", screen)
             nave.vida = 20
         if game_over:
+            
             mostrar_mensaje("PERDISTE. Presiona R para volver a intentar.", screen)
         
         

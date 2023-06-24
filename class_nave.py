@@ -35,6 +35,7 @@ class Nave(pygame.sprite.Sprite):
         self.barra_vida.width = ancho_barra
     
     def verificar_colision(self, proyectil_cont):
+        sonido_retry = pygame.mixer.Sound("sfx/retry.wav")
         for proyectil in proyectil_cont:
             if proyectil.colision(self.hitbox):
                 self.contador_pj += 1
@@ -42,6 +43,7 @@ class Nave(pygame.sprite.Sprite):
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
                 if self.vida < 0:
+                    sonido_retry.play()
                     print("PERDISTE")
                     return True  
 
