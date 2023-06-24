@@ -10,7 +10,6 @@ fuente_personalizada = pygame.font.Font(ruta_fuente, 70)
 ANCHO = 800
 ALTO = 600
 
-# Colores
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
 AZUL = (0, 0, 255)
@@ -81,8 +80,8 @@ def dibujar_menu_opciones(volumen_musica, volumen_efectos):
     dibujar_texto("-", fuente, BLANCO, 250, 300)
     dibujar_texto("+", fuente, BLANCO, 550, 300)
 
-    dibujar_texto(f"Volumen de Música: {volumen_musica:.1f}", fuente, BLANCO, 300, 450)
-    dibujar_texto(f"Volumen de Efectos: {volumen_efectos:.1f}", fuente, BLANCO, 300, 500)
+    dibujar_texto(f"Volumen de Música: {volumen_musica*100:.1f}", fuente, BLANCO, 300, 450)
+    dibujar_texto(f"Volumen de Efectos: {volumen_efectos*100:.1f}", fuente, BLANCO, 300, 500)
 
     pygame.draw.rect(ventana, BLANCO, (100, 50, 150, 50), 1)  
 
@@ -231,12 +230,6 @@ def ejecutar_menu():
 
                 pygame.display.update()
                 reloj.tick(60)
-
-
-
-
-
-
 
         elif opcion_menu == 4:
             en_menu_rankings = True
