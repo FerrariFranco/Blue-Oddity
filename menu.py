@@ -5,13 +5,15 @@ import pygame
 import sqlite3
 
 fuente = pygame.font.Font(None, 36)
-
+ruta_fuente = "font/Entanglement-rgpRB.ttf"
+fuente_personalizada = pygame.font.Font(ruta_fuente, 70)
 ANCHO = 800
 ALTO = 600
 
 # Colores
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
+AZUL = (0, 0, 255)
 
 pygame.init()
 ventana = pygame.display.set_mode((ANCHO, ALTO))
@@ -20,6 +22,8 @@ pygame.display.set_caption("Menú")
 reloj = pygame.time.Clock()
 
 fuente = pygame.font.Font(None, 36)
+fondo_menu = pygame.image.load("img/fondomenu.jpg")
+fondo_menu = pygame.transform.scale(fondo_menu, (ANCHO, ALTO))
 
 def dibujar_texto(texto, fuente, color, x, y):
     superficie = fuente.render(texto, True, color)
@@ -27,8 +31,8 @@ def dibujar_texto(texto, fuente, color, x, y):
 
 def dibujar_botones(opciones):
     for i, opcion in enumerate(opciones):
-        pygame.draw.rect(ventana, BLANCO, (300, 150 + i * 100, 200, 50))
-        dibujar_texto(opcion, fuente, NEGRO, 340, 160 + i * 100)
+        pygame.draw.rect(ventana, BLANCO, (300, 170 + i * 100, 200, 50), 1)  
+        dibujar_texto(opcion, fuente, BLANCO, 340, 180 + i * 100)
 
 def mostrar_rankings():
     conn1 = sqlite3.connect("nivel1_ranking.db")
@@ -48,7 +52,7 @@ def mostrar_rankings():
     conn1.close()
     conn2.close()
 
-    ventana.fill(NEGRO)
+    ventana.blit(fondo_menu, (0, 0))
 
     dibujar_texto("Rankings - Nivel 1", fuente, BLANCO, 300, 100)
     dibujar_texto("Rankings - Nivel 2", fuente, BLANCO, 300, 350)
@@ -66,7 +70,7 @@ def mostrar_rankings():
     pygame.display.update()
 
 def dibujar_menu_opciones(volumen_musica, volumen_efectos):
-    ventana.fill(NEGRO)
+    ventana.blit(fondo_menu, (0, 0))
 
     dibujar_texto("Volumen de Música", fuente, BLANCO, 300, 100)
     dibujar_texto("Volumen de Efectos", fuente, BLANCO, 300, 250)
@@ -80,20 +84,22 @@ def dibujar_menu_opciones(volumen_musica, volumen_efectos):
     dibujar_texto(f"Volumen de Música: {volumen_musica:.1f}", fuente, BLANCO, 300, 450)
     dibujar_texto(f"Volumen de Efectos: {volumen_efectos:.1f}", fuente, BLANCO, 300, 500)
 
-    pygame.draw.rect(ventana, BLANCO, (100, 50, 150, 50))
-    dibujar_texto("Volver", fuente, NEGRO, 125, 60)  # Coordenadas 
+    pygame.draw.rect(ventana, BLANCO, (100, 50, 150, 50), 1)  
+
+    dibujar_texto("Volver", fuente, BLANCO, 125, 60) 
     
 def ejecutar_menu():
     pygame.mixer.music.load('sfx/noMEdejansalir.mp3')
     pygame.mixer.music.play(-1)
 
-    volumen_musica = 0.5  # Volumen inicial de la música
+    volumen_musica = 0.5  
     volumen_efectos = 0.5 
 
     opcion_menu = None
     nivel = None
     regresar_primer_menu = False
     en_menu_rankings = False
+    
 
     while True:
         for evento in pygame.event.get():
@@ -116,9 +122,11 @@ def ejecutar_menu():
                     elif 450 <= y <= 500:
                         pygame.quit()
                         quit()
+        
 
-        ventana.fill(NEGRO)
+        ventana.blit(fondo_menu, (0, 0))
         dibujar_botones(["Jugar", "Opciones", "Rankings", "Salir"])
+        dibujar_texto("Blue Oddity", fuente_personalizada, AZUL, 160, 50)
 
         pygame.display.update()
         reloj.tick(60)
@@ -149,7 +157,7 @@ def ejecutar_menu():
                                 regresar_primer_menu = True 
                                 break
 
-                ventana.fill(NEGRO)
+                ventana.blit(fondo_menu, (0, 0))
                 dibujar_botones(["Nivel 1", "Nivel 2", "Nivel 3", "Volver"])
 
                 pygame.display.update()
@@ -248,8 +256,8 @@ def ejecutar_menu():
 
             mostrar_rankings()
 
-            pygame.draw.rect(ventana, BLANCO, (50, 50, 150, 50))  
-            dibujar_texto("Volver", fuente, NEGRO, 85, 60)  
+            pygame.draw.rect(ventana, BLANCO, (50, 50, 150, 50), 1) 
+            dibujar_texto("Volver", fuente, BLANCO, 85, 60)  
 
             pygame.display.update()
             reloj.tick(60)
