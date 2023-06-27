@@ -15,6 +15,8 @@ import datetime
 import sqlite3
 import pygame.mixer
 import pygame.mixer_music
+import json
+
 
 pygame.init()
 pygame.mixer.init()
@@ -207,6 +209,19 @@ def primer_nivel(nivel, vm, ve):
             clock.tick(60)
             
             if cronometro.tiempo == 55:
+                dato_a_guardar = 2
+                try:
+                    with open("nivel.json", "r") as archivo:
+                        data = json.load(archivo)
+                        nivel_actual = data.get("nivel", 0) 
+                except FileNotFoundError:
+                    nivel_actual = 0  
+
+                if dato_a_guardar > nivel_actual:
+                    data = {"nivel": dato_a_guardar}
+                    with open("nivel.json", "w") as archivo:
+                        json.dump(data, archivo)
+                        
                 nombre_jugador = obtener_nombre(screen)
                 with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()
@@ -419,6 +434,19 @@ def segundo_nivel(nivel, vm, ve):
             
             
             if cronometro.tiempo == 55:
+                dato_a_guardar = 3
+                try:
+                    with open("nivel.json", "r") as archivo:
+                        data = json.load(archivo)
+                        nivel_actual = data.get("nivel", 0) 
+                except FileNotFoundError:
+                    nivel_actual = 0  
+
+                if dato_a_guardar > nivel_actual:
+                    data = {"nivel": dato_a_guardar}
+                    with open("nivel.json", "w") as archivo:
+                        json.dump(data, archivo)
+                        
                 nombre_jugador = obtener_nombre(screen)
                 with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()

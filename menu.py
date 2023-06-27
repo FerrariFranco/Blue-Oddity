@@ -33,6 +33,33 @@ def dibujar_botones(opciones):
         pygame.draw.rect(ventana, BLANCO, (300, 170 + i * 100, 200, 50), 1)  
         dibujar_texto(opcion, fuente, BLANCO, 340, 180 + i * 100)
 
+def botones_selector_niveles(opciones):
+    try:
+        with open("nivel.json", "r") as archivo:
+            data = json.load(archivo)
+            nivel_actual = data.get("nivel", 0) 
+    except FileNotFoundError:
+        nivel_actual = 1
+    
+    if nivel_actual == 3:
+        for i, opcion in enumerate(opciones):
+            pygame.draw.rect(ventana, BLANCO, (300, 170 + i * 100, 200, 50), 1)  
+            dibujar_texto(opcion, fuente, BLANCO, 340, 180 + i * 100)
+    elif nivel_actual == 2:
+            pygame.draw.rect(ventana, BLANCO, (300, 170, 200, 50), 1)  
+            dibujar_texto("Nivel 1", fuente, BLANCO, 340, 180)
+            pygame.draw.rect(ventana, BLANCO, (300, 270 , 200, 50), 1)  
+            dibujar_texto("Nivel 2", fuente, BLANCO, 340, 280)
+            pygame.draw.rect(ventana, BLANCO, (300, 470, 200, 50), 1)  
+            dibujar_texto("Volver", fuente, BLANCO, 340, 480)
+    else:
+        pygame.draw.rect(ventana, BLANCO, (300, 170, 200, 50), 1)  
+        dibujar_texto("Nivel 1", fuente, BLANCO, 340, 180)
+        pygame.draw.rect(ventana, BLANCO, (300, 470, 200, 50), 1)  
+        dibujar_texto("Volver", fuente, BLANCO, 340, 480)
+
+
+
 def mostrar_rankings():
     conn1 = sqlite3.connect("nivel1_ranking.db")
     conn2 = sqlite3.connect("nivel2_ranking.db")
@@ -133,6 +160,12 @@ def ejecutar_menu():
         if opcion_menu == 1:
             regresar_primer_menu = False
             nivel = None
+            try:
+                with open("nivel.json", "r") as archivo:
+                    data = json.load(archivo)
+                    nivel_actual = data.get("nivel", 0) 
+            except FileNotFoundError:
+                nivel_actual = 1
             while True:
 
                 for evento in pygame.event.get():
@@ -144,20 +177,17 @@ def ejecutar_menu():
                         
                         if 300 <= x <= 500:
                             if 150 <= y <= 200:
-                                print("Nivel 1")
                                 nivel = 1
-                            elif 250 <= y <= 300:
-                                print("Nivel 2")
+                            elif 250 <= y <= 300 and nivel_actual >= 2:
                                 nivel = 2
-                            elif 350 <= y <= 400:
-                                print("Nivel 3")
+                            elif 350 <= y <= 400 and nivel_actual == 3:
                                 nivel = 3
                             elif 450 <= y <= 500:
                                 regresar_primer_menu = True 
                                 break
 
                 ventana.blit(fondo_menu, (0, 0))
-                dibujar_botones(["Nivel 1", "Nivel 2", "Nivel 3", "Volver"])
+                botones_selector_niveles(["Nivel 1", "Nivel 2", "Nivel 3", "Volver"])
 
                 pygame.display.update()
                 reloj.tick(60)
@@ -177,12 +207,12 @@ def ejecutar_menu():
                 if o == 1:
                     opcion_menu = 1
                     pygame.mixer.music.load("sfx/noMEdejansalir.mp3")
-                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.set_volume(volumen_musica)
                     pygame.mixer.music.play(-1)
                 elif o == 3:
                     opcion_menu = 4
                     pygame.mixer.music.load("sfx/noMEdejansalir.mp3")
-                    pygame.mixer.music.set_volume(0.5)
+                    pygame.mixer.music.set_volume(volumen_musica)
                     pygame.mixer.music.play(-1)
                     
 
