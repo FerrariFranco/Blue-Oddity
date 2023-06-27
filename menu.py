@@ -40,10 +40,10 @@ def mostrar_rankings():
     cursor1 = conn1.cursor()
     cursor2 = conn2.cursor()
     
-    cursor1.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (fecha TEXT, puntaje INTEGER)")
-    cursor2.execute("CREATE TABLE IF NOT EXISTS Puntos_2 (fecha TEXT, puntaje INTEGER)")
-    cursor1.execute("SELECT fecha, puntaje FROM Puntos_1 ORDER BY puntaje DESC LIMIT 3")
-    cursor2.execute("SELECT fecha, puntaje FROM Puntos_2 ORDER BY puntaje DESC LIMIT 3")
+    cursor1.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (nombre TEXT, puntaje INTEGER)")
+    cursor2.execute("CREATE TABLE IF NOT EXISTS Puntos_2 (nombre TEXT, puntaje INTEGER)")
+    cursor1.execute("SELECT nombre, puntaje FROM Puntos_1 ORDER BY puntaje DESC LIMIT 3")
+    cursor2.execute("SELECT nombre, puntaje FROM Puntos_2 ORDER BY puntaje DESC LIMIT 3")
 
     resultados1 = cursor1.fetchall()
     resultados2 = cursor2.fetchall()
@@ -57,13 +57,13 @@ def mostrar_rankings():
     dibujar_texto("Rankings - Nivel 2", fuente, BLANCO, 300, 350)
 
     for i, resultado in enumerate(resultados1):
-        fecha, puntaje = resultado
-        texto = f"{i+1}. Fecha: {fecha} - Puntaje: {puntaje}"
+        nombre, puntaje = resultado
+        texto = f"{i+1}. Nombre: {nombre} - Puntaje: {puntaje}"
         dibujar_texto(texto, fuente, BLANCO, 250, 150 + i * 30)  # Reducir tamaño de fuente
 
     for i, resultado in enumerate(resultados2):
-        fecha, puntaje = resultado
-        texto = f"{i+1}. Fecha: {fecha} - Puntaje: {puntaje}"
+        nombre, puntaje = resultado
+        texto = f"{i+1}. Nombre: {nombre} - Puntaje: {puntaje}"
         dibujar_texto(texto, fuente, BLANCO, 250, 400 + i * 30)  # Reducir tamaño de fuente
 
     pygame.display.update()

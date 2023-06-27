@@ -87,3 +87,47 @@ def menu_intermedio(screen):
 
         pygame.display.flip()
         clock.tick(60)
+        
+        
+
+    
+    
+def obtener_nombre(ventana):
+    font = pygame.font.Font(None, 36)
+    nombre = ""
+    input_activo = True
+    reloj = pygame.time.Clock()
+
+    fondo = pygame.image.load("img/fondo_input.png").convert()
+    fondo = pygame.transform.scale(fondo, (ventana.get_width(), ventana.get_height()))
+
+    while input_activo:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    input_activo = False
+                elif event.key == pygame.K_BACKSPACE:
+                    nombre = nombre[:-1]
+                else:
+                    if len(nombre) < 15:  # Limitar a 15 caracteres
+                        nombre += event.unicode
+
+        ventana.blit(fondo, (0, 0))
+        prompt_texto = "Ingresa tu nombre:"
+        prompt_superficie = font.render(prompt_texto, True, (0, 0, 0))
+        prompt_rect = prompt_superficie.get_rect(center=(ventana.get_width() // 2, ventana.get_height() // 2 - 50))
+        ventana.blit(prompt_superficie, prompt_rect)
+
+        input_rect = pygame.Rect(ventana.get_width() // 2 - 200, ventana.get_height() // 2, 400, 50)
+        pygame.draw.rect(ventana, (0, 0, 0), input_rect, 2)
+        pygame.draw.rect(ventana, (255, 255, 255), input_rect)  # Dibuja el fondo del rectángulo en blanco
+        texto_superficie = font.render(nombre, True, (0, 0, 0))
+        ventana.blit(texto_superficie, (input_rect.x + 10, input_rect.y + 10))
+
+        pygame.display.update()
+        reloj.tick(60)
+
+    return nombre

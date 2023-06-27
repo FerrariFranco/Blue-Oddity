@@ -206,12 +206,13 @@ def primer_nivel(nivel, vm, ve):
 
             clock.tick(60)
             
-            if cronometro.tiempo == 0:
-                with sqlite3.connect("nivel1_ranking.db") as conexión:
+            if cronometro.tiempo == 55:
+                nombre_jugador = obtener_nombre(screen)
+                with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()
-                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (fecha TEXT, puntaje INTEGER)")
-                    sentencia_sql = "INSERT INTO Puntos_1 (fecha, puntaje) VALUES (?, ?)"
-                    cursor.execute(sentencia_sql, (formato_fecha_hora, personaje.puntos))
+                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (nombre TEXT, puntaje INTEGER)")
+                    sentencia_sql = "INSERT INTO Puntos_1 (nombre, puntaje) VALUES (?, ?)"
+                    cursor.execute(sentencia_sql, (nombre_jugador, personaje.puntos))
                     conexión.commit()
                 if menu_intermedio(screen):
                     opcion_menu = 1
@@ -417,15 +418,13 @@ def segundo_nivel(nivel, vm, ve):
 
             
             
-            if cronometro.tiempo == 0:
-                personaje.gravity = False
+            if cronometro.tiempo == 55:
+                nombre_jugador = obtener_nombre(screen)
                 with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()
-                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_2 (fecha TEXT, puntaje INTEGER)")
-                    # Insertar los datos en la tabla
-                    sentencia_sql = "INSERT INTO Puntos_2 (fecha, puntaje) VALUES (?, ?)"
-                    cursor.execute(sentencia_sql, (formato_fecha_hora, personaje.puntos))
-                    # Confirmar los cambios en la base de datos
+                    cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_2 (nombre TEXT, puntaje INTEGER)")
+                    sentencia_sql = "INSERT INTO Puntos_2 (nombre, puntaje) VALUES (?, ?)"
+                    cursor.execute(sentencia_sql, (nombre_jugador, personaje.puntos))
                     conexión.commit()
                 if menu_intermedio(screen):
                     opcion_menu = 1
