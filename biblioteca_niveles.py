@@ -166,9 +166,8 @@ def primer_nivel(nivel, vm, ve):
                 # Verificar colisiones con el personaje
                 if consumible.rect.colliderect(personaje.rect):
                     if consumible.tipo == "vida":
-                        if personaje.vida < 15:
-                            sonido_vida.play()
-                            personaje.vida += 5
+                        sonido_vida.play()
+                        personaje.vida = 20
                         personaje.puntos += 40
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
@@ -207,7 +206,7 @@ def primer_nivel(nivel, vm, ve):
 
             clock.tick(60)
             
-            if cronometro.tiempo == 30:
+            if cronometro.tiempo == 0:
                 with sqlite3.connect("nivel1_ranking.db") as conexión:
                     cursor = conexión.cursor()
                     cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (fecha TEXT, puntaje INTEGER)")
@@ -375,9 +374,8 @@ def segundo_nivel(nivel, vm, ve):
                 # Verificar colisiones con el personaje
                 if consumible.rect.colliderect(personaje.rect):
                     if consumible.tipo == "vida":
-                        if personaje.vida < 15:
-                            sonido_vida.play()
-                            personaje.vida += 5
+                        sonido_vida.play()
+                        personaje.vida = 20
                         personaje.puntos += 40
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
@@ -419,7 +417,7 @@ def segundo_nivel(nivel, vm, ve):
 
             
             
-            if cronometro.tiempo == 55:
+            if cronometro.tiempo == 0:
                 personaje.gravity = False
                 with sqlite3.connect("nivel2_ranking.db") as conexión:
                     cursor = conexión.cursor()

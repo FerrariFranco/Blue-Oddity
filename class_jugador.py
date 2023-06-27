@@ -156,20 +156,20 @@ class Personaje():
     def dañarse(self, lista, pantalla):
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
-                self.vida -=  5
+                self.vida -=  4.5
                 self.sonido_daño.play()
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")
+                cosa.muriendo = True
                 if self.vida < 0:
                     return True  
-                cosa.muriendo = True
                 
 
     def disaparado(self, lista):
         for cosa in lista:
             if cosa.rect.colliderect(self.rect):
                 #self.contador_pj += 1
-                self.vida -=  3
+                self.vida -=  5
                 self.sonido_daño.play()
                 self.actualizar_barra_vida()   
                 #print(f"Te queda {self.vida * 10} de vida!")

@@ -69,7 +69,6 @@ def menu_intermedio(screen):
                     if next_button.collidepoint(event.pos):
                         return True
                     elif rankings_button.collidepoint(event.pos):
-                        # Lógica para mostrar los rankings
                         return False
         
         screen.blit(fondo, (0, 0))
