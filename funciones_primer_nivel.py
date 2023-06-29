@@ -112,7 +112,7 @@ def obtener_nombre(ventana):
                 elif event.key == pygame.K_BACKSPACE:
                     nombre = nombre[:-1]
                 else:
-                    if len(nombre) < 15:  # Limitar a 15 caracteres
+                    if len(nombre) < 15:  
                         nombre += event.unicode
 
         ventana.blit(fondo, (0, 0))
@@ -123,7 +123,7 @@ def obtener_nombre(ventana):
 
         input_rect = pygame.Rect(ventana.get_width() // 2 - 200, ventana.get_height() // 2, 400, 50)
         pygame.draw.rect(ventana, (0, 0, 0), input_rect, 2)
-        pygame.draw.rect(ventana, (255, 255, 255), input_rect)  # Dibuja el fondo del rectángulo en blanco
+        pygame.draw.rect(ventana, (133, 133, 133), input_rect)  
         texto_superficie = font.render(nombre, True, (0, 0, 0))
         ventana.blit(texto_superficie, (input_rect.x + 10, input_rect.y + 10))
 
@@ -131,3 +131,32 @@ def obtener_nombre(ventana):
         reloj.tick(60)
 
     return nombre
+
+
+
+
+def mostrar_visuales(screen, path):
+    font = pygame.font.Font(None, 36)
+    clock = pygame.time.Clock()
+    next_button = pygame.Rect(580, 40, 200, 50)
+    fondo = pygame.image.load(path)
+    fondo = pygame.transform.scale(fondo, (800, 600))
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if next_button.collidepoint(event.pos):
+                        return True
+        
+        screen.blit(fondo, (0, 0))
+        pygame.draw.rect(screen, (0, 0, 255), next_button, 1)
+        next_text = font.render("Comenzar", True, (0, 0, 255))
+
+        screen.blit(next_text, (next_button.x + 10, next_button.y + 10))
+
+        pygame.display.flip()
+        clock.tick(60)

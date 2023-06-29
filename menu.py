@@ -41,7 +41,7 @@ def botones_selector_niveles(opciones):
     except FileNotFoundError:
         nivel_actual = 1
     
-    if nivel_actual == 3:
+    if nivel_actual >= 3:
         for i, opcion in enumerate(opciones):
             pygame.draw.rect(ventana, BLANCO, (300, 170 + i * 100, 200, 50), 1)  
             dibujar_texto(opcion, fuente, BLANCO, 340, 180 + i * 100)
@@ -107,8 +107,8 @@ def dibujar_menu_opciones(volumen_musica, volumen_efectos):
     dibujar_texto("-", fuente, BLANCO, 250, 300)
     dibujar_texto("+", fuente, BLANCO, 550, 300)
 
-    dibujar_texto(f"Volumen de Música: {volumen_musica*100:.1f}", fuente, BLANCO, 300, 450)
-    dibujar_texto(f"Volumen de Efectos: {volumen_efectos*100:.1f}", fuente, BLANCO, 300, 500)
+    dibujar_texto(f"{int(volumen_musica*100)}", fuente, BLANCO, 390, 150)
+    dibujar_texto(f"{int(volumen_efectos*100)}", fuente, BLANCO, 380, 300)
 
     pygame.draw.rect(ventana, BLANCO, (100, 50, 150, 50), 1)  
 
@@ -125,9 +125,16 @@ def ejecutar_menu():
     nivel = None
     regresar_primer_menu = False
     en_menu_rankings = False
-    
+    dificultad = "Facil"
+    skin = "Azul"
 
     while True:
+        try:
+            with open("nivel.json", "r") as archivo:
+                data = json.load(archivo)
+                nivel_actual = data.get("nivel", 0) 
+        except FileNotFoundError:
+            nivel_actual = 1
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
@@ -160,12 +167,7 @@ def ejecutar_menu():
         if opcion_menu == 1:
             regresar_primer_menu = False
             nivel = None
-            try:
-                with open("nivel.json", "r") as archivo:
-                    data = json.load(archivo)
-                    nivel_actual = data.get("nivel", 0) 
-            except FileNotFoundError:
-                nivel_actual = 1
+            
             while True:
 
                 for evento in pygame.event.get():
@@ -177,11 +179,17 @@ def ejecutar_menu():
                         
                         if 300 <= x <= 500:
                             if 150 <= y <= 200:
-                                nivel = 1
+                                visual = mostrar_visuales(ventana, "img/historia/tierra.jpg")
+                                if visual:
+                                    nivel = 1
                             elif 250 <= y <= 300 and nivel_actual >= 2:
-                                nivel = 2
-                            elif 350 <= y <= 400 and nivel_actual == 3:
-                                nivel = 3
+                                visual = mostrar_visuales(ventana, "img/historia/transition.jpg")
+                                if visual:
+                                    nivel = 2
+                            elif 350 <= y <= 400 and nivel_actual >= 3:
+                                visual = mostrar_visuales(ventana, "img/historia/cosmo.jpg")
+                                if visual:
+                                    nivel = 3
                             elif 450 <= y <= 500:
                                 regresar_primer_menu = True 
                                 break
@@ -199,11 +207,11 @@ def ejecutar_menu():
                 opcion_menu = None  
             else:
                 if nivel == 1:
-                    o = primer_nivel(nivel, volumen_musica, volumen_efectos)
+                    o = primer_nivel(nivel, volumen_musica, volumen_efectos, dificultad)
                 elif nivel == 2:
-                    o = segundo_nivel(nivel, volumen_musica, volumen_efectos)
+                    o = segundo_nivel(nivel, volumen_musica, volumen_efectos, dificultad)
                 elif nivel == 3:
-                    juego_naves(nivel, volumen_musica, volumen_efectos)
+                    o = juego_naves(nivel, volumen_musica, volumen_efectos, dificultad, skin)
                 if o == 1:
                     opcion_menu = 1
                     pygame.mixer.music.load("sfx/noMEdejansalir.mp3")
@@ -253,10 +261,30 @@ def ejecutar_menu():
                             
                         elif 100 <= x <= 250 and 50 <= y <= 100:
                             opcion_menu = None
+                        elif 600 <= x <= 700 and 50 <= y <= 100:
+                            if dificultad == "Facil":
+                                dificultad = "Difícil"
+                            else:
+                                dificultad = "Facil"
+                                
+                        elif (600 <= x <= 700 and 500 <= y <= 550) and nivel_actual == 4:
+                            if skin == "Azul":
+                                skin = "Rojo"
+                            elif skin == "Rojo":
+                                skin = "Verde"
+                            elif skin == "Verde":
+                                skin = "Gris"
+                            elif skin == "Gris":
+                                skin = "Azul"
 
                 pygame.display.update()
 
                 dibujar_menu_opciones(volumen_musica, volumen_efectos)
+                pygame.draw.rect(ventana, BLANCO, (600, 50, 150, 50), 1)
+                dibujar_texto(dificultad, fuente, BLANCO, 615, 60)
+                if nivel_actual == 4:
+                    pygame.draw.rect(ventana, BLANCO, (600, 500, 150, 50), 1)
+                    dibujar_texto(skin, fuente, BLANCO, 615, 510)
 
                 pygame.display.update()
                 reloj.tick(60)

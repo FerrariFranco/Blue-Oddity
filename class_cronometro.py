@@ -6,7 +6,6 @@ class Cronometro:
         self.tiempo = tiempo_inicial
         self.cooldown = pygame.time.get_ticks()  
         self.cooldown_intervalo = 1000 
-
         self.fuente = pygame.font.Font(None, 36)
         self.color_texto = (255, 255, 255)
         self.posicion_texto = (400, 10)

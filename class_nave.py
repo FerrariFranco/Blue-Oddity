@@ -1,10 +1,10 @@
 import pygame
 
 class Nave(pygame.sprite.Sprite):
-    def __init__(self, tamaño, origen):
+    def __init__(self, tamaño, origen, imagen):
         pygame.sprite.Sprite.__init__(self)
         self.dimension = pygame.Surface(tamaño)
-        self.imagen = pygame.image.load("img/shipblue/shipblue0000.png")
+        self.imagen = pygame.image.load(imagen)
         self.imagen = pygame.transform.scale(self.imagen, tamaño)
         self.posicion = origen
         self.vida = 20  

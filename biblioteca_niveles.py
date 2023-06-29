@@ -21,7 +21,7 @@ import json
 pygame.init()
 pygame.mixer.init()
 
-def primer_nivel(nivel, vm, ve):
+def primer_nivel(nivel, vm, ve, dificultad):
     
     width = 800
     height = 600
@@ -98,6 +98,16 @@ def primer_nivel(nivel, vm, ve):
     pausa = False
 
     done = True
+    
+    
+    if dificultad == "Facil":
+        generador = 3000
+        puntos_vida = 40
+        puntos_gemas = 100
+    else: 
+        generador = 1500
+        puntos_vida = 80
+        puntos_gemas = 200
 
     pygame.mixer_music.set_volume(vm)
 
@@ -170,11 +180,11 @@ def primer_nivel(nivel, vm, ve):
                     if consumible.tipo == "vida":
                         sonido_vida.play()
                         personaje.vida = 20
-                        personaje.puntos += 40
+                        personaje.puntos += puntos_vida
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
                         sonido_gema.play()
-                        personaje.puntos += 100
+                        personaje.puntos += puntos_gemas
                     consumibles.remove(consumible)
 
             if lanzando:
@@ -190,7 +200,7 @@ def primer_nivel(nivel, vm, ve):
 
             tiempo = pygame.time.get_ticks()
 
-            if tiempo - spawn_enemigo >= 3000:
+            if tiempo - spawn_enemigo >= generador:
                 enemigo = Enemigo(random.choice(enemigo_spawns), 4, 1)
                 enemigos.append(enemigo)
                 spawn_enemigo = tiempo
@@ -208,7 +218,7 @@ def primer_nivel(nivel, vm, ve):
 
             clock.tick(60)
             
-            if cronometro.tiempo == 55:
+            if cronometro.tiempo == 45:
                 dato_a_guardar = 2
                 try:
                     with open("nivel.json", "r") as archivo:
@@ -223,7 +233,7 @@ def primer_nivel(nivel, vm, ve):
                         json.dump(data, archivo)
                         
                 nombre_jugador = obtener_nombre(screen)
-                with sqlite3.connect("nivel2_ranking.db") as conexión:
+                with sqlite3.connect("nivel1_ranking.db") as conexión:
                     cursor = conexión.cursor()
                     cursor.execute("CREATE TABLE IF NOT EXISTS Puntos_1 (nombre TEXT, puntaje INTEGER)")
                     sentencia_sql = "INSERT INTO Puntos_1 (nombre, puntaje) VALUES (?, ?)"
@@ -253,7 +263,7 @@ def primer_nivel(nivel, vm, ve):
     pygame.quit()
     return nivel
 
-def segundo_nivel(nivel, vm, ve):
+def segundo_nivel(nivel, vm, ve, dificultad):
     
     width = 800
     height = 600
@@ -327,6 +337,16 @@ def segundo_nivel(nivel, vm, ve):
     gameover = False
     pausa = False
     done = True
+    
+    if dificultad == "Facil":
+        generador = 3000
+        puntos_vida = 40
+        puntos_gemas = 100
+    else: 
+        generador = 1500
+        puntos_vida = 80
+        puntos_gemas = 200
+    
 
     
     while done:
@@ -392,11 +412,11 @@ def segundo_nivel(nivel, vm, ve):
                     if consumible.tipo == "vida":
                         sonido_vida.play()
                         personaje.vida = 20
-                        personaje.puntos += 40
+                        personaje.puntos += puntos_vida
                         personaje.actualizar_barra_vida()
                     elif consumible.tipo == "gema":
                         sonido_gema.play()
-                        personaje.puntos += 100
+                        personaje.puntos += puntos_gemas
                     consumibles.remove(consumible)
 
             if lanzando:
@@ -412,7 +432,7 @@ def segundo_nivel(nivel, vm, ve):
 
             tiempo = pygame.time.get_ticks()
 
-            if tiempo - spawn_enemigo >= 3000:
+            if tiempo - spawn_enemigo >= generador:
                 enemigo = Enemigo(random.choice(enemigo_spawns), 2, 2)
                 enemigos.append(enemigo)
                 spawn_enemigo = tiempo
@@ -433,7 +453,7 @@ def segundo_nivel(nivel, vm, ve):
 
             
             
-            if cronometro.tiempo == 55:
+            if cronometro.tiempo == 45:
                 dato_a_guardar = 3
                 try:
                     with open("nivel.json", "r") as archivo:
@@ -473,7 +493,7 @@ def segundo_nivel(nivel, vm, ve):
     return nivel
 
 
-def juego_naves(estado_juego, vm, ve):
+def juego_naves(estado_juego, vm, ve, dificultad, skin):
     
     width = 800
     height = 600
@@ -500,7 +520,16 @@ def juego_naves(estado_juego, vm, ve):
     game_over = False 
 
     #PJ
-    nave = Nave((50, 50), (500, height // 2))
+    match skin:
+        case "Azul":
+            naveimg = "img/shipblue/shipblue0000.png"
+        case "Rojo":
+            naveimg = "img/shipblue/shipred0000.png"
+        case "Verde":
+            naveimg = "img/shipblue/shipgreen0001.png"
+        case "Gris":
+            naveimg = "img/shipblue/ship20000.png"
+    nave = Nave((50, 50), (500, height // 2), naveimg)
     velocidad_mov = 5
     movimiento_x = 0
     movimiento_y = 0
@@ -536,7 +565,10 @@ def juego_naves(estado_juego, vm, ve):
     patron_actual = 0
 
     #Dificultad
-    modo_lunatico = False
+    if dificultad == "Facil":
+        modo_lunatico = False
+    else:
+        modo_lunatico = True
 
     # Contador para el tiempo estático
     contador_estatico = 0
@@ -681,6 +713,29 @@ def juego_naves(estado_juego, vm, ve):
         if not win:
             mostrar_mensaje(f"GANASTE! Juego hecho por Franco Ferrari", screen)
             nave.vida = 20
+            nave.actualizar_barra_vida()
+            dato_a_guardar = 4
+            try:
+                with open("nivel.json", "r") as archivo:
+                    data = json.load(archivo)
+                    nivel_actual = data.get("nivel", 0) 
+            except FileNotFoundError:
+                nivel_actual = 0  
+
+            if dato_a_guardar > nivel_actual:
+                data = {"nivel": dato_a_guardar}
+                with open("nivel.json", "w") as archivo:
+                    json.dump(data, archivo)
+            visual = mostrar_visuales(screen, "img/historia/final.jpg")
+            if visual:
+                    if menu_intermedio(screen):
+                        opcion_menu = 1
+
+                        return opcion_menu
+                    if not menu_intermedio(screen):
+                        opcion_menu = 3
+
+                        return opcion_menu
         if game_over:
             
             mostrar_mensaje("PERDISTE. Presiona R para volver a intentar.", screen)
@@ -689,7 +744,7 @@ def juego_naves(estado_juego, vm, ve):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_r] and game_over:
             game_over = False
-            nave = Nave((50, 50), (width/2, height/2))
+            nave = Nave((50, 50), (width/2, height/2), naveimg)
 
         pygame.display.flip()
         clock.tick(60)
