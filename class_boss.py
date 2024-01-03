@@ -107,8 +107,6 @@ class Boss(pygame.sprite.Sprite):
                 return False
                 
         
-        
-
     
     
     """ def verificar_colision(self, proyectiles):

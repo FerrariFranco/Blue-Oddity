@@ -218,7 +218,7 @@ def primer_nivel(nivel, vm, ve, dificultad):
 
             clock.tick(60)
             
-            if cronometro.tiempo == 45:
+            if cronometro.tiempo == 0:
                 dato_a_guardar = 2
                 try:
                     with open("nivel.json", "r") as archivo:
@@ -453,7 +453,7 @@ def segundo_nivel(nivel, vm, ve, dificultad):
 
             
             
-            if cronometro.tiempo == 45:
+            if cronometro.tiempo == 0:
                 dato_a_guardar = 3
                 try:
                     with open("nivel.json", "r") as archivo:
