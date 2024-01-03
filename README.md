@@ -25,24 +25,39 @@ El juego consta de tres niveles y dos etapas.
 ## Niveles
 
 ### Nivel 1: Plataformas
-![Primer escenario](img\Screenshots\FirstSa.JPG)
+![Primer escenario](img/Screenshots/FirstSa.JPG)
+
+Los enemigos son robots kamikaze.
 
 ### Nivel 2: Plataformas
 
-Breve descripción del segundo nivel de plataformas.
+![Segundo escenario](img/Screenshots/stage2.JPG)
+
+Los enemigos ahora disparan.
 
 ### Nivel 3: Batalla de Naves Bullet Hell
 
-Breve descripción del tercer nivel de batalla de naves estilo bullet hell.
+![Tercer escenario](img/Screenshots/boss.JPG)
+
+Batalla bullet hell contra el jefe.
 
 ## Instrucciones de Ejecución
 
 1. Clona el repositorio.
 2. Instala las dependencias (si es necesario).
-3. Ejecuta el juego.
+3. Ejecuta el main.
 
 ## Código Destacado
 
 ```python
-# Aquí puedes mostrar un fragmento de código destacado
-# relacionado con el juego.
+    #Uno de los metodos de la clase proyectil, para generar un patron con una dirección.
+    def triple_linea(self, proyectil_cont, x_e, y_e, speed, x, y):
+        angulo = self.obtener_angulo(x_e,y_e ,x, y )
+        for _ in range(8):
+            disparo = Proyectil((15, 15), (x_e, y_e + 10), "img/129.png", 90, speed, -angulo)
+            proyectil_cont.append(disparo)
+            disparo = Proyectil((15, 15), (x_e, y_e + 10), "img/129.png", 90, speed, -angulo+40)
+            proyectil_cont.append(disparo)
+            disparo = Proyectil((15, 15), (x_e, y_e + 10), "img/129.png", 90, speed, -angulo-40)
+            proyectil_cont.append(disparo)
+            speed += 1
