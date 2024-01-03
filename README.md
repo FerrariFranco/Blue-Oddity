@@ -16,10 +16,10 @@ El juego consta de tres niveles y dos etapas.
 
 ## Capturas de Pantalla
 
-![Captura de Pantalla 1](img\Screenshots\menuG.JPG)
+![Captura de Pantalla 1](img/Screenshots/menuG.JPG)
 *Pantalla de menú*
 
-![Captura de Pantalla 2](img\Screenshots\third_stage.JPG)
+![Captura de Pantalla 2](img/Screenshots/third_stage.JPG)
 *Pelea Final*
 
 ## Niveles
